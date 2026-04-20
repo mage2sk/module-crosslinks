@@ -16,9 +16,6 @@
                         <resource id="Panth_Crosslinks::crosslinks"
                                   title="Manage Crosslinks"
                                   sortOrder="10"/>
-                        <resource id="Panth_Crosslinks::config"
-                                  title="Configuration"
-                                  sortOrder="20"/>
                     </resource>
                 </resource>
 
