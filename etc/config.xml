@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <panth_crosslinks>
+            <general>
+                <crosslinks_enabled>1</crosslinks_enabled>
+                <max_links_per_page>5</max_links_per_page>
+                <excluded_tags>h1,h2,h3,h4,h5,h6,a,button,script,style</excluded_tags>
+                <crosslink_time_activation>0</crosslink_time_activation>
+            </general>
+        </panth_crosslinks>
+    </default>
+</config>

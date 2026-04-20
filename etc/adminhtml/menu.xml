@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Crosslinks — Admin Menu
+ * Adds a Crosslinks group under Panth Infotech with direct links to the
+ * grid and the configuration section.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Panth_Crosslinks::manage"
+             title="Crosslinks"
+             module="Panth_Crosslinks"
+             sortOrder="40"
+             parent="Panth_Core::panth_extensions"
+             action="panth_crosslinks/crosslink/index"
+             resource="Panth_Crosslinks::crosslinks"/>
+
+        <add id="Panth_Crosslinks::config_link"
+             title="Crosslinks Configuration"
+             module="Panth_Crosslinks"
+             sortOrder="45"
+             parent="Panth_Core::panth_extensions"
+             action="adminhtml/system_config/edit/section/panth_crosslinks"
+             resource="Panth_Crosslinks::config"/>
+    </menu>
+</config>

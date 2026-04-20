@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Panth\Crosslinks\Api\CrosslinkRepositoryInterface"
+                type="Panth\Crosslinks\Model\Crosslink\Repository"/>
+
+    <!-- Grid data source -->
+    <type name="Panth\Crosslinks\Model\ResourceModel\Crosslink\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">panth_seo_crosslink</argument>
+            <argument name="resourceModel" xsi:type="string">Panth\Crosslinks\Model\ResourceModel\Crosslink</argument>
+        </arguments>
+    </type>
+
+    <!-- Wire UI grid data-source name to the collection -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="panth_crosslink_listing_data_source" xsi:type="string">Panth\Crosslinks\Model\ResourceModel\Crosslink\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Crosslink output plugins (catalog + CMS) -->
+    <type name="Magento\Catalog\Helper\Output">
+        <plugin name="panth_crosslinks_catalog_output"
+                type="Panth\Crosslinks\Plugin\Crosslink\CatalogOutputPlugin"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Cms\Model\Template\FilterProvider">
+        <plugin name="panth_crosslinks_cms_filter"
+                type="Panth\Crosslinks\Plugin\Crosslink\CmsFilterPlugin"
+                sortOrder="10"/>
+    </type>
+</config>
