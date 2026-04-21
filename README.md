@@ -55,6 +55,7 @@ Internal linking is one of the most durable on-site SEO signals a store can cont
 
 ## Table of Contents
 
+- [Preview](#preview)
 - [Features](#features)
 - [How It Works](#how-it-works)
 - [Compatibility](#compatibility)
@@ -64,6 +65,64 @@ Internal linking is one of the most durable on-site SEO signals a store can cont
 - [Security](#security)
 - [Troubleshooting](#troubleshooting)
 - [Support](#support)
+
+---
+
+## Preview
+
+### Admin
+
+**Global configuration** — toggle the module, cap links per page, set excluded tags, and enable time-based activation.
+
+![Admin configuration](docs/images/admin-config.png)
+
+**Rules grid** — list every crosslink rule with keyword, reference type, target URL, placement toggles, store scope, schedule, and priority. Supports filters, mass actions, and inline store column resolution (`All Store Views` / `Main Website → Default Store View`).
+
+![Admin grid](docs/images/admin-grid.png)
+
+**Edit form — Category reference (all stores)** — link the keyword "bag" to Category by ID 4. Max Replacements = 2, Priority = 100, applies to product + category + CMS pages.
+
+![Admin edit form — category reference](docs/images/admin-edit-category.png)
+
+**Edit form — Scheduled Custom URL** — Flash Sale rule active only between 01 Jan 2027 → 31 Dec 2027. Respects the store-level Time-Based Activation toggle.
+
+![Admin edit form — scheduled rule](docs/images/admin-edit-scheduled.png)
+
+### Storefront — Hyvä
+
+**Product description (Affirm Water Bottle)** — `backpack` → Endeavor Daytrip Backpack SKU, `bag` → Bags category. Injected inline with the `panth-crosslink` class.
+
+![Hyvä product description](docs/images/hyva-product-water-bottle.png)
+
+**Product description (Zing Jump Rope)** — `fitness` → Fitness Equipment category.
+
+![Hyvä product — fitness](docs/images/hyva-product-jump-rope.png)
+
+**Category description (Bags)** — `backpack`, `training`, `gear`, `bag`, `watch` rendered in the category intro.
+
+![Hyvä category — Bags](docs/images/hyva-category-bags.png)
+
+**CMS page (`/crosslink-test`)** — links for every seeded keyword in a single paragraph, capped by `max_links_per_page`.
+
+![Hyvä CMS page](docs/images/hyva-cms-test-page.png)
+
+### Storefront — Luma
+
+**Product description (Affirm Water Bottle)** — same rules render identically on Luma's default template.
+
+![Luma product description](docs/images/luma-product-water-bottle.png)
+
+**Product description (Zing Jump Rope)** — `fitness` → Fitness Equipment category.
+
+![Luma product — fitness](docs/images/luma-product-jump-rope.png)
+
+**Category description (Bags)** — `backpack`, `training`, `gear`, `bag`, `watch` rendered on the category intro.
+
+![Luma category — Bags](docs/images/luma-category-bags.png)
+
+**CMS page (`/crosslink-test`)** — rules rendered via the CMS `FilterProvider` plugin on both block and page filters.
+
+![Luma CMS page](docs/images/luma-cms-test-page.png)
 
 ---
 

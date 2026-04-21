@@ -23,8 +23,8 @@
         <column xsi:type="boolean" name="in_cms" nullable="false" default="true"/>
         <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0"/>
         <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP"/>
-        <column xsi:type="timestamp" name="active_from" on_update="false" nullable="true" comment="Crosslink active from"/>
-        <column xsi:type="timestamp" name="active_to" on_update="false" nullable="true" comment="Crosslink active until"/>
+        <column xsi:type="datetime" name="active_from" on_update="false" nullable="true" comment="Crosslink active from"/>
+        <column xsi:type="datetime" name="active_to" on_update="false" nullable="true" comment="Crosslink active until"/>
         <column xsi:type="varchar" name="reference_type" length="32" nullable="false" default="url" comment="Reference type: url|product_sku|category_id"/>
         <column xsi:type="varchar" name="reference_value" length="255" nullable="true" comment="Reference value (SKU or category ID)"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

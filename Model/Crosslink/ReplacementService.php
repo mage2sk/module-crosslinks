@@ -73,6 +73,16 @@ class ReplacementService
             }
 
             $text = $segment['content'];
+
+            // Placeholders insulate newly-inserted anchors from being re-matched
+            // by subsequent keywords. e.g. without this, injecting an anchor for
+            // "bag" whose href contains "/gear/" would let the next keyword
+            // "gear" match inside the anchor's attribute, producing nested <a>s.
+            // We use `__PCL{n}__` — double-underscore wrappers ensure \b word
+            // boundaries cannot match any keyword inside the placeholder token.
+            $placeholders = [];
+            $placeholderIndex = 0;
+
             foreach ($crosslinks as $crosslink) {
                 if ($totalReplacements >= $maxLinksPerPage) {
                     break;
@@ -100,12 +110,18 @@ class ReplacementService
                 $count = 0;
                 $replaced = preg_replace_callback(
                     $pattern,
-                    function (array $matches) use ($crosslink, $allowed, &$count): string {
+                    function (array $matches) use ($crosslink, $allowed, $storeId, &$count, &$placeholders, &$placeholderIndex): string {
                         if ($count >= $allowed) {
                             return $matches[0];
                         }
+                        $anchor = $this->buildAnchor($crosslink, $matches[0], $storeId);
+                        if ($anchor === $matches[0]) {
+                            return $matches[0];
+                        }
                         $count++;
-                        return $this->buildAnchor($crosslink, $matches[0]);
+                        $token = '__PCL' . $placeholderIndex++ . '__';
+                        $placeholders[$token] = $anchor;
+                        return $token;
                     },
                     $text
                 );
@@ -115,6 +131,10 @@ class ReplacementService
 
                 $keywordReplacementCounts[$crosslinkId] = $usedForKeyword + $count;
                 $totalReplacements += $count;
+            }
+
+            if (!empty($placeholders)) {
+                $text = strtr($text, $placeholders);
             }
 
             $result .= $text;
@@ -258,9 +278,9 @@ class ReplacementService
      * admin-curated values cannot inject XSS, and HTML-encodes every piece of
      * user-controlled content written into the rendered anchor.
      */
-    private function buildAnchor(Crosslink $crosslink, string $matchedText): string
+    private function buildAnchor(Crosslink $crosslink, string $matchedText, int $currentStoreId): string
     {
-        $resolvedUrl = $this->resolveUrl($crosslink);
+        $resolvedUrl = $this->resolveUrl($crosslink, $currentStoreId);
         if ($resolvedUrl === null || $resolvedUrl === '') {
             return $matchedText;
         }
@@ -274,7 +294,10 @@ class ReplacementService
         $url = htmlspecialchars($resolvedUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $title = htmlspecialchars($crosslink->getUrlTitle(), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        $attrs = 'href="' . $url . '"';
+        // `panth-crosslink` class lets themes style injected links independently
+        // of other anchors (e.g. to keep an underline when the surrounding prose
+        // strips it).
+        $attrs = 'href="' . $url . '" class="panth-crosslink"';
         if ($title !== '') {
             $attrs .= ' title="' . $title . '"';
         }
@@ -287,8 +310,14 @@ class ReplacementService
 
     /**
      * Resolve the final URL for a crosslink based on its reference type.
+     *
+     * @param Crosslink $crosslink       The crosslink rule to resolve.
+     * @param int       $currentStoreId  The store being rendered for — url_rewrite
+     *                                   rows are keyed by actual store_id (1, 2, …),
+     *                                   never 0, so we always look up against the
+     *                                   current store, not the crosslink's scope.
      */
-    private function resolveUrl(Crosslink $crosslink): ?string
+    private function resolveUrl(Crosslink $crosslink, int $currentStoreId): ?string
     {
         $referenceType = $crosslink->getReferenceType();
         $referenceValue = $crosslink->getReferenceValue();
@@ -297,7 +326,7 @@ class ReplacementService
             return $crosslink->getUrl();
         }
 
-        $cacheKey = $referenceType . '::' . ($referenceValue ?? '') . '::' . $crosslink->getStoreId();
+        $cacheKey = $referenceType . '::' . ($referenceValue ?? '') . '::' . $currentStoreId;
         if (array_key_exists($cacheKey, $this->resolvedUrlCache)) {
             return $this->resolvedUrlCache[$cacheKey];
         }
@@ -305,11 +334,11 @@ class ReplacementService
         $resolvedUrl = match ($referenceType) {
             CrosslinkReferenceType::TYPE_PRODUCT_SKU => $this->resolveProductUrl(
                 (string) $referenceValue,
-                $crosslink->getStoreId()
+                $currentStoreId
             ),
             CrosslinkReferenceType::TYPE_CATEGORY_ID => $this->resolveCategoryUrl(
                 (int) $referenceValue,
-                $crosslink->getStoreId()
+                $currentStoreId
             ),
             default => $crosslink->getUrl(),
         };

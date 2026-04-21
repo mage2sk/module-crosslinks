@@ -4,6 +4,46 @@ All notable changes to this extension are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.2]
+
+### Fixed
+- `ReplacementService::resolveUrl` was resolving URL rewrites against
+  `$crosslink->getStoreId()` (always `0` for "All Store Views"), but
+  Magento only stores rewrites keyed by the actual store ids (1, 2, ...).
+  Non-URL references (`category_id` / `product_sku`) now look up against
+  the **current** render store, so All-Stores rules resolve on every
+  storefront.
+- Nested anchor HTML when two rules matched overlapping text. Example:
+  injecting `<a href="/gear/bags.html">bag</a>` then running the `gear`
+  rule caused `gear` to match inside the just-inserted href attribute,
+  producing `<a href="/<a href="/gear.html">gear</a>/bags.html">bag</a>`.
+  The replacement loop now substitutes opaque `__PCL{n}__` placeholders
+  during iteration and swaps them for real anchors only after every rule
+  has run — `\b` word boundaries cannot match inside the token so no
+  later rule can see or re-enter a previously-built anchor.
+- Store View column in the admin grid rendered as a blank cell for rows
+  with `store_id = 0` because `Magento\Store\Ui\Component\Listing\Column\Store`
+  treats scalar `0` as empty via `!empty()`. New
+  `Panth\Crosslinks\Ui\Component\Listing\Column\Store` subclass wraps
+  scalar `store_id` values in a one-element array before delegating to
+  the parent, so `0` now correctly resolves to **All Store Views**.
+
+### Changed
+- `active_from` / `active_to` columns upgraded from `TIMESTAMP` to
+  `DATETIME` in `db_schema.xml`. MySQL `TIMESTAMP` overflows past
+  2038-01-19 (the Y2038 limit) and silently stored any future-dated
+  campaigns as `0000-00-00`, breaking both edges of the scheduling
+  filter. `DATETIME` carries valid values from 1000-01-01 to 9999-12-31.
+
+### Added
+- Rendered anchors now carry `class="panth-crosslink"` for themeable
+  styling without touching any other `<a>` on the page.
+- Shipped `view/frontend/web/css/crosslinks.css` (loaded via
+  `default.xml` on every frontend page) with a teal underline preset,
+  fully overridable by the storefront theme.
+- `docs/images/` — 12 annotated admin + storefront screenshots (Hyvä +
+  Luma) embedded in the README Preview section.
+
 ## [1.0.1]
 
 ### Fixed
