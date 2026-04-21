@@ -70,6 +70,12 @@ Internal linking is one of the most durable on-site SEO signals a store can cont
 
 ## Preview
 
+### Live walkthrough
+
+End-to-end admin flow — configure the module, add a keyword rule, save, and see the crosslink appear on the storefront. Click to play.
+
+![Panth Crosslinks demo](docs/images/demo.gif)
+
 ### Admin
 
 **Global configuration** — toggle the module, cap links per page, set excluded tags, and enable time-based activation.
