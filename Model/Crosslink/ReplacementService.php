@@ -321,10 +321,16 @@ class ReplacementService
      * True when $resolvedUrl normalises to the same path as the current
      * storefront request — i.e. the crosslink would link the page to itself.
      * Compares paths only, so host/scheme/querystring/fragment are ignored.
+     *
+     * Reads getOriginalPathInfo() (the user-visible SEO URL, e.g.
+     * "/magento-2-malware-scanner.html") rather than getPathInfo() — the
+     * latter returns the post-rewrite internal route ("/catalog/product/
+     * view/id/82") which never matches the rewrite path stored against
+     * the crosslink rule.
      */
     private function isSelfReferencingUrl(string $resolvedUrl): bool
     {
-        $currentPath = $this->normalisePath((string) $this->request->getPathInfo());
+        $currentPath = $this->normalisePath((string) $this->request->getOriginalPathInfo());
         $resolvedPath = $this->normalisePath(parse_url($resolvedUrl, PHP_URL_PATH) ?? $resolvedUrl);
 
         return $currentPath !== '' && $currentPath === $resolvedPath;
