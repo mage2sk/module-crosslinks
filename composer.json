@@ -2,7 +2,7 @@
     "name": "mage2kishan/module-crosslinks",
     "description": "Automatic internal crosslinks for Magento 2 (Hyva + Luma). Converts configured keywords in product, category, and CMS content into anchor links to boost internal linking and SEO. Extracted from Panth_AdvancedSEO for independent installation.",
     "type": "magento2-module",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "license": "proprietary",
     "keywords": [
         "magento2",

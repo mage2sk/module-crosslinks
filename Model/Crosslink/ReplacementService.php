@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Panth\Crosslinks\Model\Crosslink;
 
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 use Panth\Crosslinks\Helper\Config as CrosslinksConfig;
@@ -28,7 +29,8 @@ class ReplacementService
         private readonly CollectionFactory $collectionFactory,
         private readonly StoreManagerInterface $storeManager,
         private readonly CrosslinksConfig $config,
-        private readonly ResourceConnection $resource
+        private readonly ResourceConnection $resource,
+        private readonly RequestInterface $request
     ) {
     }
 
@@ -291,6 +293,13 @@ class ReplacementService
             return $matchedText;
         }
 
+        // Skip self-referencing links: a keyword that resolves to the page
+        // currently being rendered just reloads the page and dilutes the SEO
+        // signal a crosslink is meant to give.
+        if ($this->isSelfReferencingUrl($resolvedUrl)) {
+            return $matchedText;
+        }
+
         $url = htmlspecialchars($resolvedUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $title = htmlspecialchars($crosslink->getUrlTitle(), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
@@ -306,6 +315,28 @@ class ReplacementService
         }
 
         return '<a ' . $attrs . '>' . htmlspecialchars($matchedText, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) . '</a>';
+    }
+
+    /**
+     * True when $resolvedUrl normalises to the same path as the current
+     * storefront request — i.e. the crosslink would link the page to itself.
+     * Compares paths only, so host/scheme/querystring/fragment are ignored.
+     */
+    private function isSelfReferencingUrl(string $resolvedUrl): bool
+    {
+        $currentPath = $this->normalisePath((string) $this->request->getPathInfo());
+        $resolvedPath = $this->normalisePath(parse_url($resolvedUrl, PHP_URL_PATH) ?? $resolvedUrl);
+
+        return $currentPath !== '' && $currentPath === $resolvedPath;
+    }
+
+    private function normalisePath(string $path): string
+    {
+        $path = strtok($path, '?#');
+        $path = preg_replace('#/index\.php#', '', (string) $path);
+        $path = '/' . ltrim((string) $path, '/');
+        $path = rtrim($path, '/');
+        return strtolower($path);
     }
 
     /**
