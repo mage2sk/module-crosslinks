@@ -1,0 +1,26 @@
+/**
+ * Default styling for Panth Crosslinks injected anchors.
+ * Overridable from any theme by targeting .panth-crosslink with higher
+ * specificity or !important.
+ */
+body a.panth-crosslink {
+    color: var(--color-primary-darker, #0F766E);
+    font-weight: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    padding-block: 3px;
+    border-radius: 2px;
+}
+
+body a.panth-crosslink:hover,
+body a.panth-crosslink:focus-visible {
+    color: color-mix(in srgb, var(--color-primary-darker, #0F766E) 80%, #000);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+body a.panth-crosslink:focus-visible {
+    outline: 2px solid var(--color-primary, #0D9488);
+    outline-offset: 2px;
+}
