@@ -1,0 +1,30 @@
+{
+    "panth_seo_crosslink": {
+        "column": {
+            "crosslink_id": true,
+            "keyword": true,
+            "url": true,
+            "url_title": true,
+            "max_replacements": true,
+            "nofollow": true,
+            "priority": true,
+            "is_active": true,
+            "in_product": true,
+            "in_category": true,
+            "in_cms": true,
+            "store_id": true,
+            "created_at": true,
+            "active_from": true,
+            "active_to": true,
+            "reference_type": true,
+            "reference_value": true
+        },
+        "index": {
+            "PANTH_SEO_CROSSLINK_IDX_ACTIVE_STORE": true,
+            "PANTH_SEO_CROSSLINK_IS_ACTIVE_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}
